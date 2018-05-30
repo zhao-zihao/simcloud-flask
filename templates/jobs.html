@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+
+    #myTable {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #myTable td, #myTable th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    #myTable tr:nth-child(even){background-color: #f2f2f2;}
+
+    #myTable tr:hover {background-color: #ddd;}
+
+    #myTable th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #myTable .c1 {
+        text-align: center;
+    }
+
+    #myTable .c2 {
+        text-align: center;
+        font-family:courier;
+        color:cornflowerblue;
+    }
+
+    #myTable .c3 {
+        text-align: center;
+    }
+
+    #myTable .c4 {
+        text-align: center;
+    }
+
+    #myTable .c5 {
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    </style>
+    <title>all jobs</title>
+</head>
+<body>
+
+    <a href="/">Home</a>
+
+    <div>
+    {% if jobs %}
+          <table id="myTable">
+              <tr>
+                  <th>Index</th>
+                  <th>Job ID</th>
+                  <th>Owner</th>
+                  <th>Status</th>
+                  <th>CPU</th>
+                  <th>Memory</th>
+                  <th>Disk</th>
+                  <th>Started</th>
+                  <th>Completed</th>
+                  <th>Created</th>
+                  <th>Total Time</th>
+                  <th>SMI</th>
+                  <th>Exit Code</th>
+              </tr>
+
+
+            {% for job in jobs %}
+                <TR>
+                    <TD class="c1"><span align="center">{{loop.index}}</span></TD>
+                   <TD class="c2"><a href="https://simcloud-mr2.apple.com/?job={{job.id}}#jobs">{{job.id}}</a></TD>
+                   <TD class="c3">{{job.owner}}</TD>
+                   {% if job.status == 'complete' %}
+                        <TD class="c4"><span style="color:green;">{{job.status}}</span></TD>
+                     {% elif job.status == 'error'%}
+                        <TD class="c4"><span style="color:red;">{{job.status}}</span></TD>
+                     {% else %}
+                       <TD class="c4">{{job.status}}</TD>
+                    {% endif %}
+                   <TD class="c5">{{job.allocated_resources.cpu}}</TD>
+                    <TD class="c5">{{job.allocated_resources.memory}}</TD>
+                    <TD class="c5">{{job.allocated_resources.disk}}</TD>
+                    <TD class="c5">{{job.times.started}}</TD>
+                    <TD class="c5">{{job.times.completed}}</TD>
+                    <TD class="c5">{{job.times.created}}</TD>
+
+                    <TD class="c5">{{job.total_time}}</TD>
+                    <TD class="c5">{{job.requirements.smi}}</TD>
+                    <TD class="c5">{{job.all_exit_code}}</TD>
+                </TR>
+            {% endfor %}
+            </table>
+    {% else %}
+        <h1>No jobs !!!</h1>
+    {% endif %}
+    </div>
+
+</body>
+</html>
+
+
