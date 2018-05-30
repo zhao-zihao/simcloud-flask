@@ -59,5 +59,5 @@ def list_jobs():
     return render_template('jobs.html', jobs=jifs)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=80)
 
