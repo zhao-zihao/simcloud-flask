@@ -34,16 +34,20 @@ def list_jobs():
     for job in jifs:
         # format created, started and completed time
         job.times.created = arrow.get(job.times.created).to('US/Pacific').format(date_format)
+        job.times.created_timestamp = arrow.get(job.times.created, date_format).timestamp
+
         if job.times.get("started", None):
             job.times.started = arrow.get(job.times.started).to('US/Pacific').format(date_format)
+            job.times.started_timestamp = arrow.get(job.times.started, date_format).timestamp
         if job.times.get("completed", None):
             job.times.completed = arrow.get(job.times.completed).to('US/Pacific').format(date_format)
+            job.times.completed_timestamp = arrow.get(job.times.completed, date_format).timestamp
 
         # job finished, add more info to job dict
         if job.times.get("started", None) and job.times.get("completed", None):
             # add total_time to job dict
-            job.total_time = arrow.get(job.times.completed, date_format).timestamp - arrow.get(job.times.started, date_format).timestamp
-            job.total_time = str(round(job.total_time / 60.0, 2)) + ' minutes'
+            job.total_time_numeric = arrow.get(job.times.completed, date_format).timestamp - arrow.get(job.times.started, date_format).timestamp
+            job.total_time = str(round(job.total_time_numeric / 60.0, 2)) + ' minutes'
 
             # append all exit code to the job.all_exit_code
             job.all_exit_code = []
@@ -52,11 +56,19 @@ def list_jobs():
 
             # if any exit code evaluate to be true(!=0), show it, else hide the actual code and show "0".
             if any(job.all_exit_code):
-                pass
+                job.all_exit_code = ','.join(map(str,job.all_exit_code))
             else:
                job.all_exit_code = "0"
 
-    return render_template('jobs.html', jobs=jifs)
+            # add args for quick search, only add the 2nd task arg
+            job.all_tasks_args = []
+            for task in job.tasks[1:2]:
+                job.all_tasks_args.append(task.args)
+
+    # add length
+    jifs_meta = {'length': len(jifs)}
+
+    return render_template('jobs.html', jobs=jifs, jobs_meta=jifs_meta)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
